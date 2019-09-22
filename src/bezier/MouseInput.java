@@ -10,6 +10,7 @@ public class MouseInput implements MouseListener {
     private double y;
     public static int contador = 0;
     public static boolean fazerPonto = false;
+    public static int i=0, j=0;
 
     GLWindow window = Bezier.getWindow();
 
@@ -31,44 +32,66 @@ public class MouseInput implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent me) {
-        contador ++;
         
-        if (contador == 1) {
-            fazerPonto = true;
-            EventListener.x1 = x;
-            EventListener.y1 = y;
+        
+        if (contador == 0 && EventListener.qtdPonto == 0) {
             
-        }else if(contador == 2){
-            fazerPonto = true;
-            EventListener.x2 = x;
-            EventListener.y2 = y;
+            fazerPonto = true;            
+            EventListener.qtdPonto = 1;
+            EventListener.TodosPontos[i][0] = x;
+            EventListener.TodosPontos[i][1] = y;
+            i++;
+            contador++;
+        }else if(contador == 1 && EventListener.qtdPonto == 1){
+            fazerPonto = true;            
+            EventListener.qtdPonto = 2;
+            EventListener.TodosPontos[i][0] = x;
+            EventListener.TodosPontos[i][1] = y;
+            i++;
+            contador++;
             
-        }else if(contador == 3){
-            fazerPonto = true;
-            EventListener.x3 = x;
-            EventListener.y3 = y;
+        }else if(contador == 2 && EventListener.qtdPonto == 2){
+            fazerPonto = true;            
+            EventListener.qtdPonto = 3;
+            EventListener.TodosPontos[i][0] = x;
+            EventListener.TodosPontos[i][1] = y;
+            i++;
+            contador++;
             
-        }else if (contador == 4){
+        }else if (contador == 3 && EventListener.qtdPonto == 3){
             fazerPonto = true;        
-            
-            EventListener.x4 = x;
-            EventListener.y4 = y;
+            EventListener.qtdPonto = 4;            
+            EventListener.TodosPontos[i][0] = x;
+            EventListener.TodosPontos[i][1] = y;
+            i++;
             contador = 0;
+        }else{                    // JÁ TENHO OS 4 PONTOS INICIAIS E QUERO ADICIONAR MAIS PONTOS
+           
+            
+            EventListener.TodosPontos[i][j] = x;
+            if(j==0){
+                j++;
+            }
+            EventListener.TodosPontos[i][j] = x;
+            if(j==1){
+                j=0;
+                i++;
+            }
+            fazerPonto = true;
+            contador = 1;            
         }
-
     }
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        fazerPonto = false;
+        
     }
 
     @Override
     public void mouseMoved(MouseEvent me) {
 
-        x = me.getX();       
-        y = me.getY();
-        
+        x = me.getX();        
+        y = me.getY();        
     }
 
     @Override
