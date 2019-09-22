@@ -5,20 +5,16 @@ import com.jogamp.nativewindow.util.Point;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.GL2;
 
 public class MouseInput implements MouseListener {
 
-    private int x;
-    private int y;
-    private Point dragPoint = null;
-    private int quePonto = 0;
-    public static int contador = 0;
-    public static boolean fazerPonto = false;
-    public static int i = 0, j = 0;
-    public static double pontoInicialy;
-    public static double pontoInicialx;
-    GL2 g1;
+    private int x;   // QUAL É A POSICAO X DO MOUSE
+    private int y;   // QUAL É A POSICAO Y DO MOUSE
+    private int quePonto = 0;  // QUE PONTO SO VETOR DE PONTOS EU VOU ARRASTAR
+    public static boolean maisDe4Pontos = false;
+    public static boolean criarCurva = false;
+    public static int posAtual = 0;               // QUANTOS PONTOS EU TENHO NO VETOR DE PONTOS (TodosPontos) 
+    public static boolean pegou = false;
 
     GLWindow window = Bezier.getWindow();
 
@@ -41,104 +37,81 @@ public class MouseInput implements MouseListener {
     @Override
     public void mousePressed(MouseEvent me) {
 
-        if (contador == 0 && EventListener.qtdPonto == 0) {
-
-            fazerPonto = true;
+        if (EventListener.qtdPonto == 0) {  // PRIMEIRO PONTO
+           
             EventListener.qtdPonto = 1;
-            EventListener.TodosPontos[i] = new Point(x,y);             
-            i++;
-            contador++;
-        } else if (contador == 1 && EventListener.qtdPonto == 1) {
-            fazerPonto = true;
+            EventListener.TodosPontos[posAtual] = new Point(x, y);
+            posAtual++;           
+            
+        } else if (EventListener.qtdPonto == 1 && KeyBoardInput.mexerPonto == false) { // SEGUNDO PONTO
+           
             EventListener.qtdPonto = 2;
-            EventListener.TodosPontos[i] = new Point(x,y);
-            i++;
-            contador++;
+            EventListener.TodosPontos[posAtual] = new Point(x, y);
+            posAtual++;            
 
-        } else if (contador == 2 && EventListener.qtdPonto == 2) {
-            fazerPonto = true;
+        } else if (EventListener.qtdPonto == 2 && KeyBoardInput.mexerPonto == false) { // TERCEIRO PONTO 
+            
             EventListener.qtdPonto = 3;
-            EventListener.TodosPontos[i] = new Point(x,y);          
-            i++;           
-            contador++;
+            EventListener.TodosPontos[posAtual] = new Point(x, y);
+            posAtual++;            
 
-        } else if (contador == 3 && EventListener.qtdPonto == 3) {
-            fazerPonto = true;
+        } else if (EventListener.qtdPonto == 3 && KeyBoardInput.mexerPonto == false) { // QUARTO PONTO
+           
             EventListener.qtdPonto = 4;
-            EventListener.TodosPontos[i] = new Point(x,y);
-            i++;
-            contador = 0;
+            EventListener.TodosPontos[posAtual] = new Point(x, y);
+            posAtual++;            
+            criarCurva = true; // PERMITE EU DESENHAR A CURVA
+            
         } else if (KeyBoardInput.mexerPonto == false) {                    // JÁ TENHO OS 4 PONTOS INICIAIS E QUERO ADICIONAR MAIS PONTOS
 
-            EventListener.TodosPontos[i] = new Point();
-            TodosPontos[i].setX(x);
-            i++;
-            if (j == 0) {
-                j++;
-            }             
-            EventListener.TodosPontos[i].setY(y);
-            i++;
-            if (j == 1) {
-                j = 0;
-                i++;
-            }
-            fazerPonto = true;
-            contador = 1;
-            EventListener.qtdPonto++;
-            EventListener.Mais3Pontos++;
+            EventListener.TodosPontos[posAtual] = new Point(x,y);            
+            posAtual++;
+            criarCurva = true;  // SABER SE POSSO DESENHAR NA TELA A CURVA
+            maisDe4Pontos = true;
+            EventListener.qtdPonto++; // INCREMENTO QUANTOS PONTOS EU TENHO NA TELA
+            EventListener.Mais3Pontos++; // FALTA 3 - 1 PONTOS PARA DESENHAR A PROXIMA CURVA
 
-        } else { // ERSTOU PEGANDO O PONTO
-
+        } else { // ESTOU PEGANDO O PONTO PARA ARRASTAR
             Point p;
-            dragPoint = null;            
-            
-            for (int j = 0; j < i; j++) {
-                p = (Point) TodosPontos[i];
-                if (p.getX() == x && p.getY() == y) {
-                    quePonto = j;
-                    dragPoint = p;
-                }
+            if (pegou == false) {
+                for (int j = 0; j < posAtual; j++) {
+                    p = TodosPontos[j];                    
 
+                    if ((p.getX() >= (x - 22) && p.getX() <= (x + 22)) && (p.getY() >= (y - 22) && p.getY() <= (y + 22))) {
+                        pegou = true;
+                        quePonto = j;  // QUE PONTO DO VETOR (TodosPontos) EU VOU ARRASTAR
+                    }
+                }
             }
         }
-
-       
     }
 
     @Override
-    public void mouseMoved (MouseEvent me) {
-
+    public void mouseMoved(MouseEvent me) {
+        
         x = me.getX();
         y = me.getY();
-    }
-
-    @Override
-    public void mouseDragged (MouseEvent me) {
         
-        if(KeyBoardInput.mexerPonto == true){
+        if (KeyBoardInput.mexerPonto == true && pegou == true) {          
             
-            dragPoint.setX(x); 
-            dragPoint.setY(y);
-        }   
-        
-    }
-
-    @Override
-    public void mouseWheelMoved (MouseEvent e){
-        
-        if(KeyBoardInput.mexerPonto == true){
-            
-            TodosPontos[quePonto] = dragPoint;
-            
+            TodosPontos[quePonto].setX(x); // ALTERO O X DO PONTO QUE EU PEGUEI COM AS COORDENADAS DO MOUSE
+            TodosPontos[quePonto].setY(y);  // ALTERO O Y DO PONTO QUE EU PEGUEI COM AS COORDENADAS DO MOUSE
         }
-        
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent me) {
+
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseEvent e) {
+
     }
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        
-        
-        
-    }
 
+    }
 }

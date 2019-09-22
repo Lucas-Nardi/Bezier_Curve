@@ -1,32 +1,20 @@
 package bezier;
 
+import com.jogamp.nativewindow.util.Point;
 import com.jogamp.opengl.GL2;
 
 public class Desenho {
 
-    private double x1;    //  PONTO DE CONTROLE 1 (x1,y1)
-    private double y1;    //-------------------------------
-    private double x2;    //  PONTO DE CONTROLE 2 (x2,y2)
-    private double y2;    //-------------------------------
-    private double x3;    //  PONTO DE CONTROLE 3 (x3,y3)
-    private double y3;    // ------------------------------
-    private double x4;    // PONTO DE CONTROLE 4 (x4,y4)
-    private double y4;    // -------------------------------
-    GL2 gl;
-    Polinomio poly;
+    private Point ctrlP[];
+    private GL2 gl;
+    private Polinomio poly;
+    private int quaisPontos;  // SABER QUAIS PONTOS EU PRECISO PARA DESENHAR A CURVA
 
-    public Desenho(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.x3 = x3;
-        this.y3 = y3;
-        this.x4 = x4;
-        this.y4 = y4;        
+    public Desenho(Point[] PontosDeControle ,int  quaisPontos) {
+        this.ctrlP = PontosDeControle;
         poly = new Polinomio();
+        this.quaisPontos = quaisPontos;
     }
-
     public GL2 getGl() {
         return gl;
     }
@@ -36,35 +24,55 @@ public class Desenho {
     }
 
     public void Draw(double qtdPontos) {
+
+        double t, t1;
+        double px1, py1, px2, py2;
+        int p = (quaisPontos -4 );        
+        double x1,y1,x2,y2,x3,y3,x4,y4;
+         // PONTOS DE CONTROLE
+        x1 = ctrlP[p].getX();       
+        y1 = ctrlP[p].getY();        
+        x2 = ctrlP[p+1].getX();        
+        y2 = ctrlP[p+1].getY();         
+        x3 = ctrlP[p+2].getX();         
+        y3 = ctrlP[p+2].getY();     
+        x4 = ctrlP[p+3].getX();        
+        y4 = ctrlP[p+3].getY();
         
-        double t,t1;
-        double px1,py1,px2,py2;
         
-        for (double i = 0; i < qtdPontos - 1; i++) {
-            gl.glColor3d(1, 1, 0);
-            gl.glLineWidth(2);                        // GROSSURA DA LINHA
+        
+        for (int i = 0; i < qtdPontos - 1; i++) {
+            gl.glColor3d(1, 1, 0);                    // QUAL É A COR DA CURVA
+            gl.glLineWidth(3);                        // GROSSURA DA LINHA
             t = i / qtdPontos;
             t1 = (i + 1) / qtdPontos;
-            px1 = poly.CriarPonto(x1,x2,x3,x4, t);
-            py1 = poly.CriarPonto(y1,y2,y3,y4, t);
-            px2 = poly.CriarPonto(x1,x2,x3,x4, t1);
-            py2 = poly.CriarPonto(y1,y2,y3,y4, t1);            
+            
+            
+            px1 = poly.CriarPonto(x1, x2 , x3, x4, t);            
+            py1 = poly.CriarPonto(y1, y2, y3, y4, t);
+            px2 = poly.CriarPonto(x1, x2, x3, x4, t1);
+            py2 = poly.CriarPonto(y1, y2, y3, y4, t1);
             gl.glBegin(GL2.GL_LINES); // Começa a desemnhas quadrilateros
-                gl.glVertex2d(px1, py1);
-                gl.glVertex2d(px2, py2);            
+            gl.glVertex2d(px1, py1);
+            gl.glVertex2d(px2, py2);
             gl.glEnd();
         }
     }
-    public void ReflexaoEixoX(){
-        this.y1 = -y1;
-        this.y2 = -y2;
-        this.y3 = -y3;
-        this.y4 = -y4;
+
+    public int getQuaisPontos() {
+        return quaisPontos;
     }
-    public void ReflexaoEixoY(){
-        this.x1 = -x1;
-        this.x2 = -x2;
-        this.x3 = -x3;
-        this.x4 = -x4;
-    }    
+
+    public void setQuaisPontos(int quaisPontos) {
+        this.quaisPontos = quaisPontos;
+    }
+    
+    public Polinomio getPoly() {
+        return poly;
+    }
+
+    public void setPoly(Polinomio poly) {
+        this.poly = poly;
+    }
+
 }

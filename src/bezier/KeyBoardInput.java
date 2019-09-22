@@ -18,15 +18,17 @@ public class KeyBoardInput implements KeyListener{
         if(e.getKeyCode() == KeyEvent.VK_CONTROL){ // PODER MOVER OS PONTOS
             
             mexerPonto = true;
-            
-            
         }
-        
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         
+        if(e.getKeyCode() == KeyEvent.VK_CONTROL){ // PODER MOVER OS PONTOS
+            
+            mexerPonto = false;
+            MouseInput.pegou = false;
+        }
     }
     
 }
