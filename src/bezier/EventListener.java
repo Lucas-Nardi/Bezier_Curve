@@ -1,5 +1,6 @@
 package bezier;
 
+import com.jogamp.nativewindow.util.Point;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -10,9 +11,10 @@ public class EventListener implements GLEventListener {
 
     private Desenho[] curvas = new Desenho[42];
     public static int qtdPonto = 0;
-    public static double TodosPontos[][] = new double[40][2];
+    public static Point TodosPontos[] = new Point[42];
     private int queDesenho = 0;
-
+    public static int Mais3Pontos = 0;
+    
     @Override
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
@@ -23,89 +25,93 @@ public class EventListener implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-
-        boolean plotar = MouseInput.fazerPonto;
-
+        
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
         gl.glColor3d(1, 1, 1);// Takes RGB
         gl.glPointSize(5);
 
-        if (qtdPonto == 1) {
+        if (qtdPonto == 1) { // DESENHA OS 3 PRIMEIROS PONTOS
 
             gl.glBegin(GL2.GL_POINTS); // Começa a desemnhas quadrilateros
-            gl.glVertex2d(TodosPontos[0][0], TodosPontos[0][1]);
+            gl.glVertex2d(TodosPontos[0].getX(), TodosPontos[0].getY());
             gl.glEnd();
         } else if (qtdPonto == 2) {
 
             gl.glBegin(GL2.GL_POINTS); // Começa a desemnhas quadrilateros
-            gl.glVertex2d(TodosPontos[0][0], TodosPontos[0][1]);
-            gl.glVertex2d(TodosPontos[1][0], TodosPontos[1][1]);
+            gl.glVertex2d(TodosPontos[0].getX(), TodosPontos[0].getY());
+            gl.glVertex2d(TodosPontos[1].getX(), TodosPontos[1].getY());
             gl.glEnd();
         } else if (qtdPonto == 3) {
 
             gl.glBegin(GL2.GL_POINTS); // Começa a desemnhas quadrilateros
-            gl.glVertex2d(TodosPontos[0][0], TodosPontos[0][1]);
-            gl.glVertex2d(TodosPontos[1][0], TodosPontos[1][1]);
-            gl.glVertex2d(TodosPontos[2][0], TodosPontos[2][1]);
+            gl.glVertex2d(TodosPontos[0].getX(), TodosPontos[0].getY());
+            gl.glVertex2d(TodosPontos[1].getX(), TodosPontos[1].getY());
+            gl.glVertex2d(TodosPontos[2].getX(), TodosPontos[0].getY());
             gl.glEnd();
 
-        } else if (qtdPonto >= 4) {
-            int c, l = 0;
+        } else if (qtdPonto >= 4) {   // DESENHA A PRIMEIRA E AS DEMAIS CURVAS
+            int l = 0;
+            
             
             if (MouseInput.contador == 1) { // SEGUNDA E AS DEMAIS CURVAS
 
-                if (MouseInput.fazerPonto == true) {
-                    qtdPonto++;
+                if (MouseInput.fazerPonto == true &&  Mais3Pontos == 3) {
+                    
                     queDesenho++;
                     System.out.println(qtdPonto);
-                    curvas[queDesenho] = new Desenho(TodosPontos[qtdPonto - 3][0], TodosPontos[qtdPonto - 3][1],
-                            TodosPontos[qtdPonto - 2][0], TodosPontos[qtdPonto - 2][1],
-                            TodosPontos[qtdPonto - 1][0], TodosPontos[qtdPonto - 1][1],
-                            TodosPontos[qtdPonto][0], TodosPontos[qtdPonto][1]);
+                    curvas[queDesenho] = new Desenho(TodosPontos[qtdPonto - 4].getX(), TodosPontos[qtdPonto - 4].getY(),
+                                                        TodosPontos[qtdPonto - 3].getX(), TodosPontos[qtdPonto - 3].getY(),
+                                                        TodosPontos[qtdPonto - 2].getX(), TodosPontos[qtdPonto - 2].getY(),
+                                                        TodosPontos[qtdPonto - 1].getX(), TodosPontos[qtdPonto - 1].getY());
                     curvas[queDesenho].setGl(gl);
-                    curvas[queDesenho].Draw(60);
+                    curvas[queDesenho].Draw(100);
                     MouseInput.fazerPonto = false;
+                    Mais3Pontos = 0;
                 }
-
-                curvas[0].Draw(60);
-                curvas[1].Draw(60);
+                // DESENHA TODAS AS CURVAS
+               for(int i=0; i <= queDesenho ; i ++){
+                   curvas[i].Draw(100);
+               }
                 
 
-                if (queDesenho == 2) {
-                    for (l = 0; l < 1; l++) { // TENHO 3 CURVAS
-
-                        curvas[l].Draw(60);
-                        curvas[l + 1].Draw(60);
-                        curvas[l + 2].Draw(60);
-                    }
-                }
+                // EXIBIR OS PONTOS DE CONTROLE
                 for (l = 0; l < MouseInput.i; l++) {
                     gl.glColor3d(1, 1, 1);// Takes RGB
                     gl.glBegin(GL2.GL_POINTS); // Começa a desemnhas quadrilateros
-                    gl.glVertex2d(TodosPontos[l][0], TodosPontos[l][1]);
+                    gl.glVertex2d(TodosPontos[l].getX(), TodosPontos[l].getY());
                     gl.glEnd();
                 }
 
-            } else {
+            } else if (qtdPonto == 4) {
 
                 // PRIMEIRA CURVA A SER DESENHADA
                 if (MouseInput.fazerPonto == true) {
-                    curvas[queDesenho] = new Desenho(TodosPontos[0][0], TodosPontos[0][1], TodosPontos[1][0], TodosPontos[1][1], TodosPontos[2][0], TodosPontos[2][1], TodosPontos[3][0], TodosPontos[3][1]);
+                    curvas[queDesenho] = new Desenho(TodosPontos[0].getX(), TodosPontos[0].getY(),
+                                                        TodosPontos[1].getX(), TodosPontos[1].getY(),
+                                                        TodosPontos[2].getX(), TodosPontos[2].getY(),
+                                                        TodosPontos[3].getX(), TodosPontos[3].getY());
                     curvas[queDesenho].setGl(gl);
-                    curvas[queDesenho].Draw(60);
+                    curvas[queDesenho].Draw(100);
                     MouseInput.fazerPonto = false;
 
-                } else {
-                    curvas[queDesenho].Draw(60);
-                }
+                } else { // DESENHA A CURVA 
+                    curvas[queDesenho].Draw(100);
+                }                                         // EXIBIR OS PONTOS DE CONTROLE
                 for (l = 0; l < MouseInput.i; l++) {
                     gl.glColor3d(1, 1, 1);// Takes RGB
                     gl.glBegin(GL2.GL_POINTS); // Começa a desemnhas quadrilateros
-                    gl.glVertex2d(TodosPontos[l][0], TodosPontos[l][1]);
+                    gl.glVertex2d(TodosPontos[l].getX(), TodosPontos[l].getY());
                     gl.glEnd();
                 }
 
+            }else{
+                for (l = 0; l < MouseInput.i; l++) {
+                    gl.glColor3d(1, 1, 1);// Takes RGB
+                    gl.glBegin(GL2.GL_POINTS); // Começa a desemnhas quadrilateros
+                    gl.glVertex2d(TodosPontos[l].getX(), TodosPontos[l].getY());
+                    gl.glEnd();
+                }
             }
         }
     }
