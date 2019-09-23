@@ -4,7 +4,6 @@ import static bezier.EventListener.TodosPontos;
 import com.jogamp.nativewindow.util.Point;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
-import com.jogamp.newt.opengl.GLWindow;
 
 public class MouseInput implements MouseListener {
 
@@ -15,8 +14,7 @@ public class MouseInput implements MouseListener {
     public static boolean criarCurva = false;
     public static int posAtual = 0;               // QUANTOS PONTOS EU TENHO NO VETOR DE PONTOS (TodosPontos) 
     public static boolean pegou = false;
-
-    GLWindow window = Bezier.getWindow();
+   
 
     @Override
 
@@ -90,7 +88,7 @@ public class MouseInput implements MouseListener {
     public void mouseMoved(MouseEvent me) {
         
         x = me.getX();
-        y = me.getY();
+        y = me.getY();        
         
         if (KeyBoardInput.mexerPonto == true && pegou == true) {          
             

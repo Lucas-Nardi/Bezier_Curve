@@ -4,6 +4,7 @@ import com.jogamp.nativewindow.util.Point;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 public class EventListener implements GLEventListener {
 
@@ -12,6 +13,9 @@ public class EventListener implements GLEventListener {
     public static Point TodosPontos[] = new Point[120]; // VETOR QUE GUARDA TODOS OS PONTOS QUE TEM NAS CURVAS
     public static int queDesenho = 0;                   // PEGA UMA CURVA DO VETOR DE CURVAS
     public static int Mais3Pontos = 0;                  // SABER QUANTOS PONTOS FALTAM PARA DESENHAR MAIS UMA CURVA
+    int pos = 20;
+    String poly;
+    GLUT glut = new GLUT();
 
     @Override
     public void init(GLAutoDrawable drawable) {
@@ -47,7 +51,7 @@ public class EventListener implements GLEventListener {
 
             }
             curvas[queDesenho].Draw(100);  // DESENHA A PRIMEIRA CURVA
-                                                  
+
             for (l = 0; l < MouseInput.posAtual; l++) {  // EXIBIR OS PONTOS DE CONTROLE DA CURVA 1
                 gl.glColor3d(1, 1, 1);// Takes RGB
                 gl.glBegin(GL2.GL_POINTS); // Começa a desemnhas quadrilateros
@@ -62,7 +66,7 @@ public class EventListener implements GLEventListener {
 
                 if (MouseInput.criarCurva == true && Mais3Pontos == 3) { // POSSO DESENHAR MAIS UMA CURVA POIS TENHO MAIS 3 PONTOS
 
-                    queDesenho++;                    
+                    queDesenho++;
                     curvas[queDesenho] = new Desenho(TodosPontos, MouseInput.posAtual);
                     curvas[queDesenho].setGl(gl);
                     curvas[queDesenho].Draw(100);
@@ -81,8 +85,22 @@ public class EventListener implements GLEventListener {
                     gl.glVertex2d(TodosPontos[l].getX(), TodosPontos[l].getY());
                     gl.glEnd();
                 }
-            } 
+            }
         }
+
+        if (KeyBoardInput.aparecerPolinomios) {
+            for (int i = 0; i < MouseInput.posAtual; i++) {
+
+                if (i % 3 == 0 && i != 0) {
+
+                    poly = "B(t) = (1-t)^3 * (" + TodosPontos[i - 3].getX() + "," + TodosPontos[i - 3].getY() + ") + 3t * (1-t)^2 * (" + TodosPontos[i - 2].getX() + "," + TodosPontos[i - 2].getY()
+                            + ") + 3 * (t^2) * (1-t)(" + TodosPontos[i - 1].getX() + "," + TodosPontos[i - 1].getY() + ") + (t)^3 * (" + TodosPontos[i].getX() + "," + TodosPontos[i].getY() + ")";
+                    gl.glRasterPos2d(80, 50 + (4 * 9));
+                    glut.glutBitmapString(3, poly);
+                }
+            }
+        }
+
     }
 
     @Override
@@ -90,10 +108,10 @@ public class EventListener implements GLEventListener {
 
         GL2 gl = drawable.getGL().getGL2();
         gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadIdentity();        
-        gl.glOrtho(0, 640, 360, 0, -1, 1);  // Pense que sua tela tenha 4 quadrantes onde
+        gl.glLoadIdentity();
+        gl.glOrtho(0, 700, 500, 0, -1, 1);  // Pense que sua tela tenha 4 quadrantes onde
         gl.glMatrixMode(GL2.GL_MODELVIEW);           // O eixo do x tenha -320 --> 0 e  0 --> 320
-                                            // E o eixo y tenha -180 --> 0 e 0 --> 180
+        // E o eixo y tenha -180 --> 0 e 0 --> 180
     }
 
     @Override

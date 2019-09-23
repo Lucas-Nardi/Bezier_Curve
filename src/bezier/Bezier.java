@@ -8,8 +8,8 @@ import com.jogamp.opengl.util.FPSAnimator;
 public class Bezier {
     
     private static GLWindow window;
-    public static int screenWidth = 640;
-    public static int screenHeight = 360;
+    public static int screenWidth = 700;
+    public static int screenHeight = 500;
     public static float unitWide = 10;
     
     public static void init(){
@@ -17,9 +17,9 @@ public class Bezier {
        GLProfile profile = GLProfile.get(GLProfile.GL2);
        GLCapabilities  caps = new GLCapabilities(profile);
        window = GLWindow.create(caps);
-       window.setSize(640, 360);
+       window.setSize(screenWidth, screenHeight);
        window.setTitle("TESTE");
-       window.setResizable(false);
+       window.setResizable(true);
        window.addGLEventListener(new EventListener());
        window.addKeyListener(new KeyBoardInput());
        window.addMouseListener(new MouseInput());
